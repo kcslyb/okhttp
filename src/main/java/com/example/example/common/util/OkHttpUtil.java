@@ -31,7 +31,7 @@ public class OkHttpUtil {
                     LOGGER.info("{}","retrofitBack = "+message);
                 }
             });
-            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
             okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(httpLoggingInterceptor)
                     .connectTimeout(3000, TimeUnit.MILLISECONDS)

@@ -4,6 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * @author kcs
@@ -19,9 +20,18 @@ public interface TestService {
     Call<Object> login(@Body LoginDto loginDto);
 
     /**
-     * 更新运单状态
+     * 关联追溯码
+     * orderNo orderNo
      * @return 请求结果
      */
-    @GET("3pl-code/SO71010019100003/trace-code/list?pageNo=1&pageSize=10&type=1&sourceOrgId=XUcLvOJwmT7ZTVFiM32&directOrgId=FO7CWJLpqNsN4wbdWcf")
-    Call<Object> getTraceCode();
+    @GET("3pl-code/{orderNo}/trace-code/list")
+    Call<CodeListDto> getTraceCode(@Path("orderNo")String orderNo);
+
+    /**
+     * 复核追溯码
+     * orderNo orderNo
+     * @return 请求结果
+     */
+    @GET("3pl-code/{orderNo}/trace-code?pageNo=1&pageSize=10000&type=1")
+    Call<PageResponse<CodePackageDto>> getTraceCode2(@Path("orderNo")String orderNo);
 }
