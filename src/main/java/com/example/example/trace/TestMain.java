@@ -43,13 +43,13 @@ public class TestMain {
                             Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), CodePackageDto.class, list);
                             try {
                                 String fileName = System.currentTimeMillis() + ".xls";
-                                File saveFile = new File("./excel/t");
+                                File saveFile = new File("./excel/");
                                 if (!saveFile.exists()) {
                                     saveFile.mkdirs();
                                 }
                                 FileOutputStream fos = new FileOutputStream(new File(saveFile.getPath(),fileName));
                                 workbook.write(fos);
-                                System.out.println(saveFile.toPath()+fileName);
+                                System.out.println("导出文件位于"+saveFile.getAbsolutePath()+fileName);
                                 workbook.close();
                                 fos.close();
                             } catch (Exception e) {
@@ -70,11 +70,12 @@ public class TestMain {
                             Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), CodePackageDto.class, codePackageDtoList);
                             try {
                                 String fileName = System.currentTimeMillis() + ".xls";
-                                File saveFile = new File("./excel/t");
+                                File saveFile = new File("./excel/");
                                 if (!saveFile.exists()) {
                                     saveFile.mkdirs();
                                 }
                                 FileOutputStream fos = new FileOutputStream(saveFile.getPath() + fileName);
+                                System.out.println("导出文件位于"+saveFile.getAbsolutePath()+fileName);
                                 workbook.write(fos);
                                 workbook.close();
                                 fos.close();
