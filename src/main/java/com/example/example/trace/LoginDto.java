@@ -9,11 +9,20 @@ import java.io.Serializable;
 public class LoginDto implements Serializable {
 
     private String encryptionPsw;
+    private String password;
     private String logisticsCentreId;
     private String orgCode;
     private String type;
     private String username;
     private String validateCode;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getEncryptionPsw() {
         return encryptionPsw;
