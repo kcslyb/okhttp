@@ -3,16 +3,14 @@ package com.example.example.trace;
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.example.example.common.retrofit.RetrofitFactory;
+import com.example.example.common.util.Constant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -22,6 +20,7 @@ import java.util.function.Predicate;
 public class TestMain {
     public static void main(String[] args) {
         TestMain testMain = new TestMain();
+
         Map<String, String> mapAccount = testMain.acceptAccountInfo();
         if (!StringUtils.isEmpty(mapAccount.get("account")) && !StringUtils.isEmpty(mapAccount.get("pwd"))) {
             LoginDto loginDto = new LoginDto();
@@ -29,6 +28,14 @@ public class TestMain {
             loginDto.setUsername(mapAccount.get("account"));
             loginDto.setPassword(mapAccount.get("pwd"));
             try {
+                Properties properties = new Properties();
+                InputStream is = new BufferedInputStream(new FileInputStream(new File("./url.properties")));
+                properties.load(is);
+                String url = properties.getProperty("url");
+                if (url != null && url.length() > 1) {
+                    Constant.apiUrl = url;
+                }
+
                 TestService testService = RetrofitFactory.getRetrofitHelper(TestService.class);
                 Response<Object> execute = testService.login(loginDto).execute();
                 if (execute.code() == 200) {
@@ -47,14 +54,16 @@ public class TestMain {
                                 if (!saveFile.exists()) {
                                     saveFile.mkdirs();
                                 }
-                                FileOutputStream fos = new FileOutputStream(new File(saveFile.getPath(),fileName));
+                                FileOutputStream fos = new FileOutputStream(new File(saveFile.getPath(), fileName));
                                 workbook.write(fos);
-                                System.out.println("导出文件位于"+saveFile.getAbsolutePath()+fileName);
+                                System.out.println("导出文件位于" + saveFile.getAbsolutePath() + fileName);
                                 workbook.close();
                                 fos.close();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        }else {
+                            System.out.println(execute1.message());
                         }
                     } else if (judge == 2) {
                         String acceptBatchNumber = testMain.acceptBatchNumber();
@@ -75,15 +84,39 @@ public class TestMain {
                                     saveFile.mkdirs();
                                 }
                                 FileOutputStream fos = new FileOutputStream(saveFile.getPath() + fileName);
-                                System.out.println("导出文件位于"+saveFile.getAbsolutePath()+fileName);
+                                System.out.println("导出文件位于" + saveFile.getAbsolutePath() + fileName);
                                 workbook.write(fos);
                                 workbook.close();
                                 fos.close();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        }else {
+                            System.out.println(execute1.message());
                         }
                     } else if (judge == 3) {
+                        Response<CodeListDto> execute1 = testService.getTraceCode(orderNo).execute();
+                        if (execute1.code() == 200) {
+                            List<CodePackageDto> codePackageDtoList = execute1.body().getList();
+                            Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), CodePackageDto.class, codePackageDtoList);
+                            try {
+                                String fileName = System.currentTimeMillis() + ".xls";
+                                File saveFile = new File("./excel/");
+                                if (!saveFile.exists()) {
+                                    saveFile.mkdirs();
+                                }
+                                FileOutputStream fos = new FileOutputStream(saveFile.getPath() + fileName);
+                                System.out.println("导出文件位于" + saveFile.getAbsolutePath() + fileName);
+                                workbook.write(fos);
+                                workbook.close();
+                                fos.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println(execute1.message());
+                        }
+                    } else if (judge == 4) {
                         System.out.println("退出程序");
                         System.exit(0);
                     }
@@ -112,13 +145,15 @@ public class TestMain {
                 return 2;
             case "3":
                 return 3;
+            case "4":
+                return 4;
             default:
                 return judge(chooseFun());
         }
     }
 
     private static String chooseFun() {
-        System.out.println("请选择输入功能代码(数字1或者2)后回车：\n\t1、【导出码上放心格式文件】\t\t\t2、【导出所选批号关联追溯码文件】\t\t\t3、【退出】");
+        System.out.println("请选择输入功能代码(数字1或者2)后回车：\n\t1、【导出码上放心格式文件】\t\t\t2、【导出所选批号关联追溯码文件】\n\t3、【导出所选批号关联追溯码文件】\t\t\t4、【退出】");
         Scanner scanner = new Scanner(System.in);
         if (scanner.hasNext()) {
             String code = scanner.next();

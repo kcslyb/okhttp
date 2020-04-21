@@ -1,10 +1,7 @@
 package com.example.example.trace;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
+import retrofit2.http.*;
 
 /**
  * @author kcs
@@ -24,14 +21,14 @@ public interface TestService {
      * orderNo orderNo
      * @return 请求结果
      */
-    @GET("3pl-code/{orderNo}/trace-code/list")
-    Call<CodeListDto> getTraceCode(@Path("orderNo")String orderNo);
+    @GET("3pl-code/trace-code/list?pageNo=1&pageSize=100000")
+    Call<CodeListDto> getTraceCode(@Query("orderNo")String orderNo);
 
     /**
      * 复核追溯码
      * orderNo orderNo
      * @return 请求结果
      */
-    @GET("3pl-code/{orderNo}/trace-code?pageNo=1&pageSize=10000&type=1")
-    Call<PageResponse<CodePackageDto>> getTraceCode2(@Path("orderNo")String orderNo);
+    @GET("3pl-code/trace-code?pageNo=1&pageSize=100000")
+    Call<PageResponse<CodePackageDto>> getTraceCode2(@Query("orderNo")String orderNo);
 }
